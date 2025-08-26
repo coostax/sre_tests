@@ -1,0 +1,25 @@
+# Compose file to test prometheus integration
+services:
+  key_server:
+    image: keyserver
+    hostname: keyserver
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - 3188:3188
+    environment:
+      - PORT=3188
+      - MAX_SIZE=1000
+    restart: unless-stopped
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./config/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yaml:ro
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yaml"
+      - "--storage.tsdb.path=/prometheus"
+    restart: unless-stopped

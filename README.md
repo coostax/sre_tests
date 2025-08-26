@@ -15,3 +15,13 @@ bin/key-server.go --max-size 2048 --srv-port 3088
 # Run tests
 go test ./keyserver
 ```
+
+### Compose file
+
+Testing integration with prometheus
+```bash
+# Build
+podman-compose build
+# Run
+podman-compose up
+```
