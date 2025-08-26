@@ -34,3 +34,18 @@ spec:
           limits:
             memory: "128Mi" # 128 mebibytes 
             cpu: "100m"
+        # Probes
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: {{ .Values.PORT }}
+          initialDelaySeconds: 15
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.PORT }}
+              scheme: HTTP
+            periodSeconds: 10

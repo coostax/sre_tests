@@ -1,10 +1,52 @@
 appName: keyserver
 namespace: default
 image:
-  name: localhost/pcosta/keyserver
-  tag: "1.0"
+  name: localhost/pcosta/key_server
+  tag: "1.1"
 configmap:
   name: keyserve-configv1
 
 PORT: "3188"
 MAX_SIZE: "1024"
+
+prometheus:
+  serverFiles:
+    alerts:
+      keyserver:
+        - alert: HighError5xxRate
+          expr: |
+            sum(rate(keyserver_http_status_total{status=~"5.."}[5m])) 
+            / sum(rate(keyserver_http_status_total[5m])) > 0.05
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "High HTTP 5xx error rate"
+            description: "More than 5% error rate over 10 minutes."
+        - alert: HighError400Rate
+          expr: |
+            sum(rate(keyserver_http_status_total{status=~"400"}[5m])) 
+            / sum(rate(keyserver_http_status_total[5m])) > 0.05
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "High HTTP 400 error rate"
+            description: "More than 5% error rate over 10 minutes."
+      generic:
+        - alert: HighMemoryUsage
+          expr: kube_pod_container_status_terminated_reason{reason="OOMKilled"} > 0
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Pod {{ $labels.pod }} has been OOMKilled"
+            description: "Pod {{ $labels.pod }} in namespace {{ $labels.namespace }} was terminated due to out-of-memory."
+        - alert: ReadinessProbeFailure
+          expr: kube_pod_container_status_ready == 0
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Pod {{ $labels.pod }} is failing readiness probes"
+            description: "Pod {{ $labels.pod }} in namespace {{ $labels.namespace }} is not passing readiness checks."
