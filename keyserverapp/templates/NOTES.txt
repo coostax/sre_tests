@@ -1,1 +1,5 @@
-Key server
+Access key server with port forwarding. Port number can be obtained by running these commands:
+kubectl -n {{ .Values.namespace }} get svc | grep {{ .Values.appName }}-service | awk '{print $5}' | cut -d: -f2
+
+Then on browser go to:
+http://localhost:$PORT

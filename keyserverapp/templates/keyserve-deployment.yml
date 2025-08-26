@@ -1,25 +1,36 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: keyserve-deployment
-  namespace: default
+  name: "{{ .Values.appName }}-deployment"
+  namespace: {{ .Values.namespace }}
   labels:
-    app: keyserver
+    app: {{ .Values.appName }}
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: keyserver
+      app: {{ .Values.appName }}
   template:
     metadata:
       labels:
-        app: keyserver
-    spec:
+        app: {{ .Values.appName }}
+      annotations: # Enable prometheus scrape
+          prometheus.io/scrape: "true"
+          prometheus.io/path: /metrics
+          prometheus.io/port: "{{ .Values.PORT }}"
+    spec: # Pod spec
       containers:
-      - name: keyserver
-        image: localhost/pcosta/keyserver:1.0
+      - name: {{ .Values.appName }}
+        image: "{{ .Values.image.name }}:{{ .Values.image.tag }}"
         ports:
-        - containerPort: 3088
+        - containerPort: {{ .Values.PORT }}
         envFrom:
         - configMapRef:
-            name: keyserve-config
+            name: {{ .Values.configmap.name }}
+        resources:
+          requests:
+            memory: "16Mi" 
+            cpu: "100m"    # 100 milli cores
+          limits:
+            memory: "128Mi" # 128 mebibytes 
+            cpu: "100m"
