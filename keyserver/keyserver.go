@@ -51,6 +51,7 @@ func KeyHandler(w http.ResponseWriter, r *http.Request) {
     }
    
     w.Header().Set("Content-Type", "text/plain")
+    w.Header().Set("Content-Length", strconv.Itoa(length))
     w.WriteHeader(http.StatusOK)
 
     // Generate and write random bytes

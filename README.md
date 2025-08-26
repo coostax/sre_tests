@@ -13,5 +13,5 @@ go build -o bin/key-server.go main.go
 bin/key-server.go --max-size 2048 --srv-port 3088
 
 # Run tests
-go test ./...
+go test ./keyserver
 ```
