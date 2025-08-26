@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keyserve-deployment
+  namespace: default
+  labels:
+    app: keyserver
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: keyserver
+  template:
+    metadata:
+      labels:
+        app: keyserver
+    spec:
+      containers:
+      - name: keyserver
+        image: localhost/pcosta/keyserver:1.0
+        ports:
+        - containerPort: 3088
+        envFrom:
+        - configMapRef:
+            name: keyserve-config

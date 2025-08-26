@@ -1,6 +1,6 @@
 apiVersion: v2
-name: keyserverapp
-description: A Helm chart for Kubernetes
+name: helmkeyserve
+description: A Helm chart Key-Server
 
 # A chart can be either an 'application' or a 'library' chart.
 #

@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: keyserve-config
+  namespace: default
+  labels:
+    app: keyserver
+data:
+  PORT: "3088"
+  MAX_SIZE: "1024"
