@@ -1,0 +1,4 @@
+# Image for dev environment
+FROM mcr.microsoft.com/devcontainers/go:1.4.5-1
+WORKDIR /app
+COPY . .
