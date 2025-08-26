@@ -3,7 +3,9 @@ FROM golang:alpine AS builder
 RUN apk add --no-cache git
 WORKDIR /app
 COPY . .
-RUN go build -o bin/key-server.go main.go
+RUN go build -o bin/key-server.go main.go \
+    # Run tests
+    && go test ./keyserver/...
 
 #App stage
 FROM alpine:latest
