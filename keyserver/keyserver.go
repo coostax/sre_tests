@@ -49,9 +49,9 @@ func KeyHandler(w http.ResponseWriter, r *http.Request) {
         http.Error(w, fmt.Sprintf("Requested length exceeds max-size (%d)", *MaxSize), http.StatusBadRequest)
         return
     }
-
-    w.Header().Set("Content-Type", "application/octet-stream")
-    w.Header().Set("Content-Length", strconv.Itoa(length))
+   
+    w.Header().Set("Content-Type", "text/plain")
+    w.WriteHeader(http.StatusOK)
 
     // Generate and write random bytes
     buf := make([]byte, length)
