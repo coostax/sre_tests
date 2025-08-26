@@ -80,10 +80,9 @@ func KeyHandler(w http.ResponseWriter, r *http.Request) {
     }
     // Observe the requested length (only if valid)
     keyLengthHistogram.Observe(float64(length))
-
-    w.Header().Set("Content-Type", "text/plain")
+    //set headers
+    w.Header().Set("Content-Type", "application/octet-stream")
     w.Header().Set("Content-Length", strconv.Itoa(length))
-    w.WriteHeader(http.StatusOK)
 
     // Generate and write random bytes
     buf := make([]byte, length)
@@ -93,7 +92,6 @@ func KeyHandler(w http.ResponseWriter, r *http.Request) {
     }
     if _, err := w.Write(buf); err != nil {
         log.Printf("Failed writing response: %v", err)
-        badRequest(w, "Internal server error", http.StatusInternalServerError)
     }
     //record 200 OK
     httpStatusCounter.WithLabelValues("200").Inc()

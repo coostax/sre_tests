@@ -64,8 +64,8 @@ func TestContentHeaders(t *testing.T) {
     res := w.Result()
     defer res.Body.Close()
 
-    if ct := res.Header.Get("Content-Type"); ct != "text/plain" {
-        t.Errorf("Content-Type = %q; want %q", ct, "text/plain")
+    if ct := res.Header.Get("Content-Type"); ct != "application/octet-stream" {
+        t.Errorf("Content-Type = %q; want %q", ct, "application/octet-stream")
     }
     if cl := res.Header.Get("Content-Length"); cl != "8" {
         t.Errorf("Content-Length = %q; want %q", cl, "8")
