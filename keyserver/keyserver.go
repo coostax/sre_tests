@@ -15,8 +15,8 @@ import (
 
 // Set default values
 var (
-    MaxSize = flag.Int("max-size", 1024, "maximum key size (default 1024)")
-    srvPort = flag.Int("srv-port", 1123, "server listening port (default 1123)")
+    MaxSize = flag.Int("max-size", 1024, "maximum key size")
+    srvPort = flag.Int("srv-port", 1123, "server listening port")
     //---- Prometheus metrics
     // **key_length_histogram**: 20 linear buckets from 0 to maxSize.
     keyLengthHistogram = prometheus.NewHistogram(
@@ -46,6 +46,9 @@ func Run() {
     prometheus.MustRegister(keyLengthHistogram, httpStatusCounter)
     http.Handle("/metrics", promhttp.Handler())
 
+    // handle requests to /health
+    http.HandleFunc("/health", HealthHandler)
+
     // Start server
     addr := fmt.Sprintf(":%d", *srvPort)
     log.Printf("Starting server on %s (max-size=%d)\n", addr, *MaxSize)
@@ -53,6 +56,20 @@ func Run() {
         log.Fatalf("Server failed: %v", err)
     }
 }
+
+// Send 200 on /health
+func HealthHandler(w http.ResponseWriter, r *http.Request) {
+    if r.Method != http.MethodGet {
+        badRequest(w, "Method not allowed", http.StatusMethodNotAllowed)
+        return
+    }
+    
+    w.Header().Set("Content-Type", "text/plain")
+    w.WriteHeader(http.StatusOK)
+    w.Write([]byte("OK"))
+    
+    httpStatusCounter.WithLabelValues("200").Inc()
+}  
 
 // Send a non 200 code and increments counter
 func badRequest(w http.ResponseWriter, status string, code int) {
